@@ -1,0 +1,4 @@
+.twelve.column(style='text-align: center;' id=tailNumber hx-get='/aircraft/' + tailNumber hx-trigger='every 2s' hx-swap='outerHTML')
+    | Status: #{aircraftStatus[tailNumber].status}
+    br
+    | Power: #{aircraftStatus[tailNumber].power} watts

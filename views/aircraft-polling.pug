@@ -1,0 +1,10 @@
+.row
+    .twelve.column(style='text-align: center;')
+        h4(style='margin-bottom: 0') #{name} #{tailNumber}
+    .row
+        include status.pug
+    .row
+        .one-half.column(style='text-align: center;')
+            button.button-primary(hx-get='/aircraft/' + tailNumber + '/on' hx-trigger="click" hx-target='#' + tailNumber hx-swap='outerHTML') Turn On
+        .one-half.column(style='text-align: center;')
+            button.button-primary(hx-get='/aircraft/' + tailNumber + '/off' hx-trigger="click" hx-target='#' + tailNumber) Turn Off

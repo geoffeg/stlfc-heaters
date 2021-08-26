@@ -1,0 +1,25 @@
+doctype html
+head
+    meta(charset='utf-8')
+    title St Louis Flying Club Aircraft Heater Controls
+    meta(name='description' content='')
+    meta(name='author' content='Geoffrey Gallaway')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    link(href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css')
+    link(rel='stylesheet' href='css/normalize.css')
+    link(rel='stylesheet' href='css/skeleton.css')
+    link(rel='icon' type='image/png' href='images/favicon.png')
+    script(src='https://unpkg.com/htmx.org@1.5.0')
+body
+    - var tailNumber = 'N20843'
+    - var name = 'Cessna Skyhawk'
+    include aircraft.pug
+    hr
+    - tailNumber = 'N2242N'
+    - name = 'Piper Arrow'
+    include aircraft.pug
+    hr
+    - tailNumber = 'N202CR'
+    - name = 'RV-7a'
+    include aircraft.pug
+
