@@ -9,25 +9,24 @@ const switchStatus = {
   N202CR : { status : "Unknown", power: 0 }
 }
 
+const listeners = {
+  N2242N : [],
+  N20843 : [],
+  N202CR : []
+}
+
 app.set('views', './views')
 app.set('view engine', 'pug')
+app.use(express.static('public'))
 
 app.get('/',  (req, res) => {
   res.render('index', { aircraftStatus: switchStatus })
-})
-
-app.get('/aircraft/:aircraft', (req, res) => {
-  res.render('status', { tailNumber: req.params.aircraft, aircraftStatus: switchStatus })
 })
 
 app.get('/aircraft/:aircraft/:command', async (req, res) => {
   await client.publish(`shellies/${req.params.aircraft}/relay/0/command`, req.params.command)
   res.status(204).send()
 })
-//app.get('/aircraft/:aircraft/:command', async (req, res) => {
-//  await client.publish(`shellies/${req.params.aircraft}/relay/0/command`, req.params.command)
-//  res.render('status', { tailNumber: req.params.aircraft, aircraftStatus: switchStatus })
-//})
 
 app.get('/events/:aircraft', async(req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
@@ -37,29 +36,15 @@ app.get('/events/:aircraft', async(req, res) => {
   res.flushHeaders();
 
   res.write('retry: 10000\n\n')
+  listeners[req.params.aircraft].push(res)
   console.log(req.params.aircraft)
 
   res.on('close', () => {
     console.log('Closing connection')
-    //res.end()
+    const index = listeners[req.params.aircraft].indexOf(req)
+    listeners[req.params.aircraft].splice(index, 1)
+    res.end()
     return
-  })
-  
-  client.on('message', (topic, message) => {
-    const switchId = topic.split("/")[1]
-    if (switchId == req.params.aircraft) {
-      if (topic.endsWith("0")) {
-        switchStatus[switchId].status = message.toString()
-      } else if (topic.endsWith("power")) {
-        switchStatus[switchId].power = parseInt(message)
-      }
-
-      res.render('status', { tailNumber: switchId, aircraftStatus: switchStatus }, (err, html) => {
-        console.log(html)
-        res.write('event: statusUpdate-' + switchId + '\n')
-        res.write('data: ' + html + '\n\n')
-      })
-    }
   })
 })
 
@@ -68,13 +53,20 @@ app.listen(port, async () => {
   client.subscribe(['shellies/+/relay/0', 'shellies/+/relay/0/power'])
 
   client.on('message', (topic, message) => {
-    //console.log(`Received message "${message}" on topic "${topic}"`)
+    console.log(`Received message "${message}" on topic "${topic}"`)
     const switchId = topic.split("/")[1]
     if (topic.endsWith("0")) {
       switchStatus[switchId].status = message.toString()
     } else if (topic.endsWith("power")) {
       switchStatus[switchId].power = parseInt(message)
     }
+    listeners[switchId].forEach((res) => {
+      res.render('status', { tailNumber: switchId, aircraftStatus: switchStatus }, (err, html) => {
+        console.log(switchId, html)
+        res.write('event: statusUpdate-' + switchId + '\n')
+        res.write('data: ' + html + '\n\n')
+      })
+    })
   })
   console.log(`Listening on http://localhost:${port}`)
 })

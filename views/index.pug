@@ -6,11 +6,14 @@ head
     meta(name='author' content='Geoffrey Gallaway')
     meta(name='viewport' content='width=device-width, initial-scale=1')
     link(href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css')
-    link(rel='stylesheet' href='css/normalize.css')
-    link(rel='stylesheet' href='css/skeleton.css')
+    link(rel='stylesheet' href='normalize.css')
+    link(rel='stylesheet' href='skeleton.css')
+    link(rel='stylesheet' href='stlfc-heaters.css')
     link(rel='icon' type='image/png' href='images/favicon.png')
     script(src='https://unpkg.com/htmx.org@1.5.0')
 body
+    .box(style='display:none')
+        | This browser is not supported
     - var tailNumber = 'N20843'
     - var name = 'Cessna Skyhawk'
     include aircraft.pug
@@ -23,3 +26,4 @@ body
     - name = 'RV-7a'
     include aircraft.pug
 
+    script(src='modernizr.js')
