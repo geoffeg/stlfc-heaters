@@ -57,9 +57,13 @@ app.listen(port, async () => {
     }
     listeners.forEach((res) => {
       res.render('status', { tailNumber: switchId, aircraftStatus: switchStatus }, (err, html) => {
-        console.log(switchId, html)
-        res.write('event: statusUpdate-' + switchId + '\n')
-        res.write('data: ' + html + '\n\n')
+        try {
+          console.log(switchId, html)
+          res.write('event: statusUpdate-' + switchId + '\n')
+          res.write('data: ' + html + '\n\n')
+        } catch (ex) {
+          console.log("Exception writing SSE response", ex)
+        }
       })
     })
   })
