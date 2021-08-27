@@ -44,6 +44,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Trigger Watchtower update
+    needs: build
     steps:
       - name: Setup Go 1.16
         id: go
@@ -62,6 +63,8 @@ jobs:
           BEARER_TOKEN: ${{ secrets.WATCHTOWER_BEARER_TOKEN }}
         run: |
           MACHINE_IP="$(tailscale ip -6 'geoffeg-org')"
+          echo $MACHINE_IP
+          echo "$MACHINE_IP"
           curl -H "Authorization: $BEARER_TOKEN" "http://$MACHINE_IP/9090/v1/update"
 
 
