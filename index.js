@@ -9,11 +9,7 @@ const switchStatus = {
   N202CR : { status : "Unknown", power: 0 }
 }
 
-const listeners = {
-  N2242N : [],
-  N20843 : [],
-  N202CR : []
-}
+const listeners = []
 
 app.set('views', './views')
 app.set('view engine', 'pug')
@@ -28,7 +24,7 @@ app.get('/aircraft/:aircraft/:command', async (req, res) => {
   res.status(204).send()
 })
 
-app.get('/events/:aircraft', async(req, res) => {
+app.get('/events', async(req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -36,13 +32,12 @@ app.get('/events/:aircraft', async(req, res) => {
   res.flushHeaders();
 
   res.write('retry: 10000\n\n')
-  listeners[req.params.aircraft].push(res)
-  console.log(req.params.aircraft)
+  listeners.push(res)
 
   res.on('close', () => {
     console.log('Closing connection')
-    const index = listeners[req.params.aircraft].indexOf(req)
-    listeners[req.params.aircraft].splice(index, 1)
+    const index = listeners.indexOf(req)
+    listeners.splice(index, 1)
     res.end()
     return
   })
@@ -60,7 +55,7 @@ app.listen(port, async () => {
     } else if (topic.endsWith("power")) {
       switchStatus[switchId].power = parseInt(message)
     }
-    listeners[switchId].forEach((res) => {
+    listeners.forEach((res) => {
       res.render('status', { tailNumber: switchId, aircraftStatus: switchStatus }, (err, html) => {
         console.log(switchId, html)
         res.write('event: statusUpdate-' + switchId + '\n')

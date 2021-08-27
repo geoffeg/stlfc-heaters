@@ -1,6 +1,6 @@
-.no-eventsource.box {
-  display: block;
-  background-color: red;
+.no-eventsource .box {
+  display: block !important;
+  color: red;
   text-align: center;
   font-weight: bold;
 }

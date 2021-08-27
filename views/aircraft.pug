@@ -2,11 +2,9 @@
     .twelve.column(style='text-align: center;')
         h4(style='margin-bottom: 0') #{name} #{tailNumber}
     .row
-        .twelve.column(style='text-align: center;' id=tailNumber hx-sse='connect:/events/' + tailNumber + ' swap:statusUpdate-' + tailNumber hx-swap='innerHTML')
+        .twelve.column(style='text-align: center;' id=tailNumber hx-sse='swap:statusUpdate-' + tailNumber hx-swap='innerHTML')
             include status.pug
     .row
         .one-half.column(style='text-align: center;')
             button.button-primary(hx-get='/aircraft/' + tailNumber + '/on' hx-trigger="click" hx-target='#' + tailNumber hx-swap='outerHTML') Turn On
-
-
-            button.button-primary(hx-get='/aircraft/' + tailNumber + '/off' hx-trigger="click" hx-target='#' + tailNumber) Turn Off
+            button.button-primary(hx-get='/aircraft/' + tailNumber + '/off' hx-trigger="click" hx-target='#' + tailNumber hx-swap='outerHTML') Turn Off
