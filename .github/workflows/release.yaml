@@ -41,6 +41,27 @@ jobs:
             latest
             ${{ needs.tag.outputs.tag }}
 
-
+  deploy:
+    runs-on: ubuntu-latest
+    name: Trigger Watchtower update
+    steps:
+      - name: Setup Go 1.16
+        id: go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16'
+      - name: Setup Tailscale
+        id: tailscale
+        uses: tailscale/tailscale-deploy-github@main
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          version: 1.7.359
+      - name: Trigger watchtower deploy
+        id: watchtower
+        env:
+          BEARER_TOKEN: ${{ secrets.WATCHTOWER_BEARER_TOKEN }}
+        run: |
+          MACHINE_IP="$(tailscale ip -6 'geoffeg-org')"
+          curl -H "Authorization: $BEARER_TOKEN" "http://$MACHINE_IP/9090/v1/update"
 
 
