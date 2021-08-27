@@ -63,6 +63,6 @@ jobs:
           BEARER_TOKEN: ${{ secrets.WATCHTOWER_BEARER_TOKEN }}
         run: |
           MACHINE_IP="$(tailscale ip -6 'geoffeg-org')"
-          curl -H "Authorization: $BEARER_TOKEN" "http://${MACHINE_IP}:9090/v1/update"
+          curl -g -6 -H "Authorization: $BEARER_TOKEN" "http://[${MACHINE_IP}]:9090/v1/update"
 
 
