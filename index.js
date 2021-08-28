@@ -36,8 +36,9 @@ app.get('/events', async(req, res) => {
 
   res.on('close', () => {
     console.log('Closing connection')
-    const index = listeners.indexOf(req)
+    const index = listeners.indexOf(res)
     listeners.splice(index, 1)
+    console.log("Remaining connections", listeners.length)
     res.end()
     return
   })
